@@ -23,6 +23,8 @@ def drawGrid():
 
 # ------------ A function to draw squares within the grid ---------#
 def drawSquare():
+
+
     for i in range(2):
         turtle.fd(37.5)
         turtle.lt(90)
