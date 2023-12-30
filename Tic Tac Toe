@@ -206,3 +206,5 @@ Button(text="New Game..", font=('Courier new', 22, 'bold'), bg='blue', fg='white
             border=5, width=4,command = lambda :Restart()).grid(row=0, column=1, sticky="we")
 root.resizable(0,0)
 root.mainloop()
+
+#
