@@ -2,7 +2,7 @@
 
 Educational Games is a collection of three simple and fun games that can help improve your logical thinking and problem-solving skills. The games are:
 
-&#x1F34E;Tic Tac Toe: A classic two-player game where you have to make a line of three Xs or Os on a 3x3 grid
+Tic Tac Toe: A classic two-player game where you have to make a line of three Xs or Os on a 3x3 grid
 
 Sudoku: A popular puzzle game where you have to fill a 9x9 grid with numbers from 1 to 9, without repeating any number in a row, column, or 3x3 subgrid
 
