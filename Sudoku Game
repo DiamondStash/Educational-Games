@@ -7,7 +7,7 @@ def setWorld():
     turtle.setworldcoordinates(-100, -100, 100, 100)
     turtle.hideturtle()
     turtle.pensize(10)
-    turtle.speed(0)
+    turtle.speed(1)
     turtle.pu()
     turtle.goto(-75, -75)
 
