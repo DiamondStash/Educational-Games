@@ -207,4 +207,3 @@ Button(text="New Game..", font=('Courier new', 22, 'bold'), bg='blue', fg='white
 root.resizable(0,0)
 root.mainloop()
 
-#
