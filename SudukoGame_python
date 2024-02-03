@@ -1,0 +1,215 @@
+import turtle
+import random
+
+# Define the size and subsize of the sudoku board
+SIZE = 9
+SUB_SIZE = 3
+
+# Create a list of lists to store the board values
+board = [[0 for _ in range(SIZE)] for _ in range(SIZE)]
+
+# Create a turtle object to draw the board
+t = turtle.Turtle()
+t.speed(0)
+t.hideturtle()
+
+# Define some colors and fonts
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+GRAY = (200, 200, 200)
+FONT = ("Arial", 18, "normal")
+
+# Draw a square with the given size and color
+def draw_square(size, color):
+    t.pencolor(color)
+    t.fillcolor(color)
+    t.begin_fill()
+    for _ in range(4):
+        t.forward(size)
+        t.right(90)
+    t.end_fill()
+
+# Draw the sudoku board with the given cell size
+def draw_board(cell_size):
+    t.penup()
+    t.goto(-cell_size * SIZE / 2, cell_size * SIZE / 2)
+    for i in range(SIZE + 1):
+        # Draw the horizontal lines
+        if i % SUB_SIZE == 0:
+            draw_square(cell_size * SIZE, BLACK)
+        else:
+            draw_square(cell_size * SIZE, GRAY)
+        t.right(90)
+        t.forward(cell_size)
+        t.left(90)
+        # Draw the vertical lines
+        t.goto(-cell_size * SIZE / 2, cell_size * (SIZE / 2 - i))
+        if i % SUB_SIZE == 0:
+            draw_square(cell_size * SIZE, BLACK)
+        else:
+            draw_square(cell_size * SIZE, GRAY)
+        t.left(90)
+        t.forward(cell_size)
+        t.right(90)
+
+# Write the given number at the given row and column
+def write_number(row, col, num):
+    t.penup()
+    t.goto(-SIZE / 2 * cell_size + col * cell_size + cell_size / 4, SIZE / 2 * cell_size - row * cell_size - cell_size / 2)
+    t.pencolor(BLACK)
+    t.write(num, font=FONT)
+
+# Generate a random sudoku board with the given number of clues
+def generate_board(clues):
+    # Fill the board with random numbers
+    for i in range(SIZE):
+        for j in range(SIZE):
+            board[i][j] = random.randint(1, SIZE)
+    # Solve the board using backtracking
+    solve_board(0, 0)
+    # Remove some numbers to create blanks
+    blanks = SIZE * SIZE - clues
+    while blanks > 0:
+        i = random.randint(0, SIZE - 1)
+        j = random.randint(0, SIZE - 1)
+        if board[i][j] != 0:
+            board[i][j] = 0
+            blanks -= 1
+
+# Check if the given number is valid at the given row and column
+def is_valid(row, col, num):
+    # Check the row
+    for i in range(SIZE):
+        if board[row][i] == num:
+            return False
+    # Check the column
+    for i in range(SIZE):
+        if board[i][col] == num:
+            return False
+    # Check the subgrid
+    row_start = (row // SUB_SIZE) * SUB_SIZE
+    col_start = (col // SUB_SIZE) * SUB_SIZE
+    for i in range(SUB_SIZE):
+        for j in range(SUB_SIZE):
+            if board[row_start + i][col_start + j] == num:
+                return False
+    # The number is valid
+    return True
+
+# Solve the board using backtracking
+def solve_board(row, col):
+    # If we reached the end of the board, we are done
+    if row == SIZE:
+        return True
+    # If the cell is not empty, move to the next one
+    if board[row][col] != 0:
+        if col == SIZE - 1:
+            return solve_board(row + 1, 0)
+        else:
+            return solve_board(row, col + 1)
+    # Try all possible numbers
+    for num in range(1, SIZE + 1):
+        if is_valid(row, col, num):
+            # Place the number on the board
+            board[row][col] = num
+            # Try to solve the rest of the board
+            if col == SIZE - 1:
+                if solve_board(row + 1, 0):
+                    return True
+            else:
+                if solve_board(row, col + 1):
+                    return True
+            # Remove the number if it does not work
+            board[row][col] = 0
+    # The board is unsolvable
+    return False
+
+# Get the row and column of the cell that the user clicks on
+def get_cell(x, y):
+    if -SIZE / 2 * cell_size < x < SIZE / 2 * cell_size and -SIZE / 2 * cell_size < y < SIZE / 2 * cell_size:
+        col = int((x + SIZE / 2 * cell_size) // cell_size)
+        row = int((SIZE / 2 * cell_size - y) // cell_size)
+        return row, col
+    else:
+        return None, None
+
+# Handle the user input
+def input_number(num):
+    global selected
+    if selected is not None:
+        row, col = selected
+        if board[row][col] == 0:
+            if is_valid(row, col, num):
+                board[row][col] = num
+                write_number(row, col, num)
+                if is_solved():
+                    print("You solved the sudoku!")
+            else:
+                print("Invalid number")
+
+# Check if the board is solved
+def is_solved():
+    for i in range(SIZE):
+        for j in range(SIZE):
+            if board[i][j] == 0:
+                return False
+    return True
+
+# Highlight the selected cell
+def highlight_cell(row, col):
+    t.penup()
+    t.goto(-SIZE / 2 * cell_size + col * cell_size, SIZE / 2 * cell_size - row * cell_size)
+    t.pencolor("red")
+    t.pensize(3)
+    t.pendown()
+    t.setheading(0)
+    for _ in range(4):
+        t.forward(cell_size)
+        t.right(90)
+    t.penup()
+
+# Select the cell that the user clicks on
+def select_cell(x, y):
+    global selected
+    row, col = get_cell(x, y)
+    if row is not None and col is not None:
+        if selected is not None:
+            draw_board(cell_size)
+            show_board()
+        selected = (row, col)
+        highlight_cell(row, col)
+
+# Show the board on the screen
+def show_board():
+    for i in range(SIZE):
+        for j in range(SIZE):
+            if board[i][j] != 0:
+                write_number(i, j, board[i][j])
+
+# Define the cell size in pixels
+cell_size = 50
+
+# Define the selected cell
+selected = None
+
+# Generate a random board with 30 clues
+generate_board(30)
+
+# Draw the board
+draw_board(cell_size)
+
+# Show the board
+show_board()
+
+# Bind the keyboard keys to the input function
+for i in range(1, 10):
+    turtle.onkey(lambda x=i: input_number(x), str(i))
+
+# Bind the mouse click to the select function
+turtle.onscreenclick(select_cell)
+
+# Listen to the user events
+turtle.listen()
+
+# Main loop
+turtle.mainloop()
