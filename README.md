@@ -12,10 +12,10 @@ Educational Games is a collection of three simple and fun games that can help yo
 
 Educational games are interactive activities that are designed to teach specific learning objectives in a fun and engaging way. They can help you learn new concepts, practice existing skills, and apply your knowledge in different situations. Educational games can also stimulate your brain, enhance your memory, and boost your concentration. By playing educational games, you can:
 
-Develop your critical thinking skills by analyzing problems, finding solutions, and making decisions.
+* Develop your critical thinking skills by analyzing problems, finding solutions, and making decisions.
 
-Improve your problem-solving skills by applying logic, strategy, and creativity.
+* Improve your problem-solving skills by applying logic, strategy, and creativity.
 
-Increase your creativity by exploring different possibilities, experimenting with new ideas, and expressing yourself.
+* Increase your creativity by exploring different possibilities, experimenting with new ideas, and expressing yourself.
 
-Stay engaged and motivated by having fun, facing challenges, and getting feedback.
+* Stay engaged and motivated by having fun, facing challenges, and getting feedback.
