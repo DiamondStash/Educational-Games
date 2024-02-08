@@ -1,0 +1,130 @@
+# Import random module
+import random
+
+# Define constants for the symbols and the board size
+X = "X"
+O = "O"
+EMPTY = " "
+SIZE = 3
+
+# Define a function to create an empty board
+def create_board():
+    board = []
+    for i in range(SIZE):
+        row = [EMPTY] * SIZE
+        board.append(row)
+    return board
+
+# Define a function to draw the board
+def draw_board(board):
+    print("-" * (SIZE * 4 + 1))
+    for row in board:
+        print("|", end="")
+        for cell in row:
+            print(f" {cell} |", end="")
+        print()
+        print("-" * (SIZE * 4 + 1))
+
+# Define a function to get a list of valid moves
+def get_valid_moves(board):
+    valid_moves = []
+    for i in range(SIZE):
+        for j in range(SIZE):
+            if board[i][j] == EMPTY:
+                valid_moves.append((i, j))
+    return valid_moves
+
+# Define a function to check if the board is full
+def is_full(board):
+    return len(get_valid_moves(board)) == 0
+
+# Define a function to check if a player has won
+def is_winner(board, symbol):
+    # Check rows
+    for i in range(SIZE):
+        if board[i].count(symbol) == SIZE:
+            return True
+    # Check columns
+    for j in range(SIZE):
+        column = [board[i][j] for i in range(SIZE)]
+        if column.count(symbol) == SIZE:
+            return True
+    # Check diagonals
+    diagonal1 = [board[i][i] for i in range(SIZE)]
+    diagonal2 = [board[i][SIZE - i - 1] for i in range(SIZE)]
+    if diagonal1.count(symbol) == SIZE or diagonal2.count(symbol) == SIZE:
+        return True
+    # No winner
+    return False
+
+# Define a function to get the user's move
+def get_user_move(board):
+    valid_moves = get_valid_moves(board)
+    while True:
+        print("Enter your move (row, col): ", end="")
+        try:
+            row, col = map(int, input().split(","))
+            row -= 1
+            col -= 1
+            if (row, col) in valid_moves:
+                return (row, col)
+            else:
+                print("Invalid move. Try again.")
+        except ValueError:
+            print("Invalid input. Try again.")
+
+# Define a function to get the computer's move
+def get_computer_move(board):
+    valid_moves = get_valid_moves(board)
+    return random.choice(valid_moves)
+
+# Define a function to play the game
+def play_game():
+    # Create an empty board
+    board = create_board()
+
+    # Choose the symbols for the players
+    user_symbol = input("Enter your symbol (X or O): ").upper()
+    while user_symbol not in [X, O]:
+        print("Invalid symbol. Try again.")
+        user_symbol = input("Enter your symbol (X or O): ").upper()
+    computer_symbol = X if user_symbol == O else O
+
+    # Choose who goes first
+    turn = random.choice([X, O])
+    print(f"{turn} goes first.")
+
+    # Play until the game is over
+    while True:
+        # Draw the board
+        draw_board(board)
+
+        # Check if the game is over
+        if is_winner(board, user_symbol):
+            print("You win!")
+            break
+        elif is_winner(board, computer_symbol):
+            print("You lose!")
+            break
+        elif is_full(board):
+            print("It's a tie!")
+            break
+
+        # Get the next move
+        if turn == user_symbol:
+            row, col = get_user_move(board)
+        else:
+            row, col = get_computer_move(board)
+            print(f"Computer's move: {row + 1}, {col + 1}")
+
+        # Make the move
+        board[row][col] = turn
+
+        # Switch the turn
+        turn = X if turn == O else O
+
+    # Draw the final board
+    draw_board(board)
+
+# Start the game
+play_game()
