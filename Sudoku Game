@@ -301,3 +301,137 @@ while True:
 turtle.done()
 
 
+# Import modules
+import pygame
+import random
+
+# Define colors
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+GREEN = (0, 255, 0)
+RED = (255, 0, 0)
+
+# Initialize pygame
+pygame.init()
+
+# Create a screen
+screen = pygame.display.set_mode((450, 450))
+
+# Set the title
+pygame.display.set_caption('Sudoku Game')
+
+# Create a clock
+clock = pygame.time.Clock()
+
+# Create a font
+font = pygame.font.SysFont('arial', 40)
+
+# Create a board
+board = [[0 for _ in range(9)] for _ in range(9)]
+
+# Fill the board with random numbers
+def fill_board():
+    for i in range(9):
+        for j in range(9):
+            board[i][j] = random.randint(1, 9)
+
+# Check if the board is valid
+def is_valid():
+    # Check rows
+    for i in range(9):
+        row = set()
+        for j in range(9):
+            if board[i][j] in row:
+                return False
+            row.add(board[i][j])
+    # Check columns
+    for j in range(9):
+        col = set()
+        for i in range(9):
+            if board[i][j] in col:
+                return False
+            col.add(board[i][j])
+    # Check boxes
+    for i in range(0, 9, 3):
+        for j in range(0, 9, 3):
+            box = set()
+            for x in range(i, i + 3):
+                for y in range(j, j + 3):
+                    if board[x][y] in box:
+                        return False
+                    box.add(board[x][y])
+    return True
+
+# Draw the board
+def draw_board():
+    # Draw the background
+    screen.fill(WHITE)
+    # Draw the grid lines
+    for i in range(9):
+        for j in range(9):
+            x = i * 50
+            y = j * 50
+            pygame.draw.rect(screen, BLACK, (x, y, 50, 50), 1)
+    # Draw the numbers
+    for i in range(9):
+        for j in range(9):
+            x = i * 50 + 15
+            y = j * 50 + 5
+            num = board[i][j]
+            text = font.render(str(num), True, BLACK)
+            screen.blit(text, (x, y))
+
+# Main loop
+running = True
+while running:
+    # Handle events
+    for event in pygame.event.get():
+        # Quit the game
+        if event.type == pygame.QUIT:
+            running = False
+        # Check for mouse clicks
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            # Get the mouse position
+            x, y = pygame.mouse.get_pos()
+            # Get the cell index
+            i = x // 50
+            j = y // 50
+            # Create a rectangle
+            rect = pygame.Rect(i * 50, j * 50, 50, 50)
+            # Draw a green border
+            pygame.draw.rect(screen, GREEN, rect, 3)
+            # Update the display
+            pygame.display.flip()
+        # Check for key presses
+        if event.type == pygame.KEYDOWN:
+            # Get the key
+            key = event.key
+            # Check if it is a number
+            if key >= pygame.K_1 and key <= pygame.K_9:
+                # Get the number
+                num = key - pygame.K_0
+                # Get the mouse position
+                x, y = pygame.mouse.get_pos()
+                # Get the cell index
+                i = x // 50
+                j = y // 50
+                # Update the board
+                board[i][j] = num
+                # Check if the board is valid
+                if is_valid():
+                    # Draw a green border
+                    pygame.draw.rect(screen, GREEN, rect, 3)
+                else:
+                    # Draw a red border
+                    pygame.draw.rect(screen, RED, rect, 3)
+                # Update the display
+                pygame.display.flip()
+    # Draw the board
+    draw_board()
+    # Update the display
+    pygame.display.flip()
+    # Set the frame rate
+    clock.tick(60)
+
+# Quit pygame
+pygame.quit()
