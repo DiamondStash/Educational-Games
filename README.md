@@ -1,21 +1,35 @@
 # Educational Games
 
-Educational Games is a collection of three simple and fun games that can help you improve your logical thinking and problem-solving skills. The games are:
+## Table of Contents
+- Introduction
+- Games
+  - Tic Tac Toe
+  - Sudoku
+  - Puzzle Game
+- Benefits of Educational Games
+- Contributing
 
-* **Tic Tac Toe**: A classic two-player game where you have to make a line of three Xs or Os on a 3x3 grid. You can play against a friend or the computer.
+## Introduction
+Educational Games is a suite of three engaging games designed to enhance your cognitive abilities. These games challenge your logical thinking and problem-solving skills while providing a fun and interactive experience.
 
-* **Sudoku**: A popular puzzle game where you have to fill a 9x9 grid with numbers from 1 to 9, without repeating any number in a row, column, or 3x3 subgrid. You can choose from different levels of difficulty and get hints if you are stuck.
+## Games
 
-* **Puzzle Game**: A sliding puzzle game where you have to rearrange the tiles to form a complete picture. You can choose from different images and sizes and challenge yourself to solve the puzzle in the shortest time.
+### Tic Tac Toe
+A timeless two-player game where the goal is to align three Xs or Os on a 3x3 grid. Challenge a friend or test your skills against the computer.
 
-# Why play educational games? 
+### Sudoku
+Engage in the classic puzzle game of Sudoku, where you fill a 9x9 grid with numbers 1-9 without repeating any number in a row, column, or 3x3 subgrid. Select your difficulty level and use hints when needed.
 
-Educational games are interactive activities that are designed to teach specific learning objectives in a fun and engaging way. They can help you learn new concepts, practice existing skills, and apply your knowledge in different situations. Educational games can also stimulate your brain, enhance your memory, and boost your concentration. By playing educational games, you can:
+### Puzzle Game
+A dynamic sliding puzzle that requires you to reorder tiles to unveil a complete image. Choose from a variety of pictures and sizes, and aim to solve the puzzle as quickly as possible.
 
-* Develop your **critical thinking skills** by analyzing problems, finding solutions, and making decisions.
+## Benefits of Educational Games
+Educational games serve as a powerful tool for learning and development. They offer an interactive way to acquire new knowledge, refine skills, and apply what you've learned in various contexts. Additionally, they can:
 
-* Improve your **problem-solving skills** by applying logic, strategy, and creativity.
+- **Enhance critical thinking**: Tackle complex problems, devise solutions, and make informed decisions.
+- **Boost problem-solving abilities**: Employ logic, strategy, and creativity to overcome challenges.
+- **Foster creativity**: Experiment with novel ideas and express your unique perspective.
+- **Maintain engagement**: Enjoy the thrill of learning through play, facing new challenges, and receiving immediate feedback.
 
-* Increase your **creativity** by exploring different possibilities, experimenting with new ideas, and expressing yourself.
-
-* Stay **engaged and motivated** by having fun, facing challenges, and getting feedback.
+## Contributing
+We welcome contributions to the Educational Games project! Whether you're interested in adding new features, improving existing games, or suggesting new ones, your input is valuable. Check out our contribution guidelines for more information on how to get involved.
