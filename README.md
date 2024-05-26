@@ -33,3 +33,4 @@ Educational games serve as a powerful tool for learning and development. They of
 
 ## Contributing
 We welcome contributions to the Educational Games project! Whether you're interested in adding new features, improving existing games, or suggesting new ones, your input is valuable. Check out our contribution guidelines for more information on how to get involved.
+
