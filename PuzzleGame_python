@@ -213,4 +213,4 @@ Changes:
 2. Improved code organization and readability.
 3. Removed redundant comments.
 4. Used instance methods for better encapsulation.
-5. Added `if __name__ == "__main__":` guard for safe execution
+5. Added `if __name__ == "__main__":` guard for safe execution. 
