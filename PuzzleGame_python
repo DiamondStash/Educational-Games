@@ -106,6 +106,111 @@ def play_game():
 # play_game()
 
 
-hodogtkcn
-toxdjxjst
-gicgkdbtnx
+```
+import random
+
+class PuzzleGame:
+    def __init__(self):
+        self.goal = [1, 2, 3, 4, 5, 6, 7, 8, 0]
+
+    def generate_state(self):
+        state = self.goal.copy()
+        random.shuffle(state)
+        return state
+
+    def is_goal(self, state):
+        return state == self.goal
+
+    def display_state(self, state):
+        print("+-+-+-+")
+        for i in range(0, 9, 3):
+            print("|{}|{}|{}|".format(*state[i:i+3]))
+        print("+-+-+-+")
+
+    def find_empty(self, state):
+        return state.index(0)
+
+    def swap_tiles(self, state, i, j):
+        state[i], state[j] = state[j], state[i]
+
+    def move_up(self, state):
+        i = self.find_empty(state)
+        if i not in [0, 1, 2]:
+            self.swap_tiles(state, i, i-3)
+
+    def move_down(self, state):
+        i = self.find_empty(state)
+        if i not in [6, 7, 8]:
+            self.swap_tiles(state, i, i+3)
+
+    def move_left(self, state):
+        i = self.find_empty(state)
+        if i not in [0, 3, 6]:
+            self.swap_tiles(state, i, i-1)
+
+    def move_right(self, state):
+        i = self.find_empty(state)
+        if i not in [2, 5, 8]:
+            self.swap_tiles(state, i, i+1)
+
+    def get_actions(self, state):
+        actions = []
+        i = self.find_empty(state)
+        if i not in [0, 1, 2]:
+            actions.append("up")
+        if i not in [6, 7, 8]:
+            actions.append("down")
+        if i not in [0, 3, 6]:
+            actions.append("left")
+        if i not in [2, 5, 8]:
+            actions.append("right")
+        return actions
+
+    def apply_action(self, state, action):
+        new_state = state.copy()
+        if action == "up":
+            self.move_up(new_state)
+        elif action == "down":
+            self.move_down(new_state)
+        elif action == "left":
+            self.move_left(new_state)
+        elif action == "right":
+            self.move_right(new_state)
+        return new_state
+
+    def generate_solution(self):
+        solution = []
+        state = self.generate_state()
+        while not self.is_goal(state):
+            actions = self.get_actions(state)
+            action = random.choice(actions)
+            state = self.apply_action(state, action)
+            solution.append(action)
+        return solution
+
+    def play_game(self):
+        state = self.generate_state()
+        self.display_state(state)
+        while not self.is_goal(state):
+            actions = self.get_actions(state)
+            print("Valid actions: {}".format(", ".join(actions)))
+            action = input("Enter your action: ")
+            if action in actions:
+                state = self.apply_action(state, action)
+                self.display_state(state)
+            else:
+                print("Invalid action. Try again.")
+        print("You win!")
+
+if __name__ == "__main__":
+    game = PuzzleGame()
+    game.play_game()
+```
+
+Changes:
+
+1. Encapsulated the game logic in a `PuzzleGame` class.
+2. Improved code organization and readability.
+3. Removed redundant comments.
+4. Used instance methods for better encapsulation.
+5. Added `if __name__ == "__main__":` guard for safe execution
