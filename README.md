@@ -36,7 +36,7 @@ We welcome contributions to the Educational Games project! Whether you're intere
 
 Here's an improved version of your README file:
 
-*Educational Games*
+# *Educational Games*
 
 *Table of Contents*
 
