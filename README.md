@@ -11,7 +11,7 @@
 3. #benefits-of-educational-games
 4. #contributing
 
-*Introduction*
+# *Introduction*
 
 Unlock the power of learning through play with Educational Games! This suite of three engaging games is designed to challenge your cognitive abilities, enhance logical thinking, and refine problem-solving skills.
 
@@ -29,7 +29,7 @@ Solve the iconic 9x9 puzzle, filling the grid with numbers 1-9 without repetitio
 
 Unscramble tiles to reveal stunning images! Select from various pictures and sizes, racing against time to solve the puzzle.
 
-*Benefits of Educational Games*
+# *Benefits of Educational Games*
 
 Discover the advantages of learning through play:
 
@@ -38,7 +38,7 @@ Discover the advantages of learning through play:
 - *Foster creativity*: Experiment with novel ideas and express your unique perspective.
 - *Maintain engagement*: Enjoy the thrill of learning through play, facing new challenges, and receiving immediate feedback.
 
-*Contributing*
+# *Contributing*
 
 Join our community! Contribute to the Educational Games project by:
 
