@@ -299,3 +299,159 @@ if __name__ == "__main__":
     solve(board)
     print("\nSolved Sudoku puzzle:")
     print_board(board)
+
+import turtle
+import random
+
+SIZE = 9
+SUB_SIZE = 3
+
+class SudokuGame:
+    def __init__(self):
+        self.board = [[0 for _ in range(SIZE)] for _ in range(SIZE)]
+        self.t = turtle.Turtle()
+        self.t.speed(0)
+        self.t.hideturtle()
+        self.cell_size = 50
+        self.selected = None
+        turtle.onscreenclick(self.select_cell)
+        turtle.listen()
+        for i in range(1, 10):
+            turtle.onkey(lambda x=i: self.input_number(x), str(i))
+        self.generate_board(30)
+        self.draw_board()
+        self.show_board()
+        turtle.mainloop()
+
+    def draw_square(self, size, color):
+        self.t.pencolor(color)
+        self.t.fillcolor(color)
+        self.t.begin_fill()
+        for _ in range(4):
+            self.t.forward(size)
+            self.t.right(90)
+        self.t.end_fill()
+
+    def draw_board(self):
+        self.t.penup()
+        self.t.goto(-self.cell_size * SIZE / 2, self.cell_size * SIZE / 2)
+        for i in range(SIZE + 1):
+            self.t.goto(-self.cell_size * SIZE / 2, self.cell_size * (SIZE / 2 - i))
+            if i % SUB_SIZE == 0:
+                self.t.pensize(3)
+            else:
+                self.t.pensize(1)
+            self.t.pendown()
+            self.t.forward(self.cell_size * SIZE)
+            self.t.penup()
+            self.t.goto(-self.cell_size * SIZE / 2 + i * self.cell_size, self.cell_size * SIZE / 2)
+            self.t.setheading(-90)
+            self.t.pendown()
+            self.t.forward(self.cell_size * SIZE)
+            self.t.penup()
+            self.t.setheading(0)
+
+    def write_number(self, row, col, num):
+        self.t.penup()
+        self.t.goto(-SIZE / 2 * self.cell_size + col * self.cell_size + self.cell_size / 4, SIZE / 2 * self.cell_size - row * self.cell_size - self.cell_size / 2)
+        self.t.pencolor("black")
+        self.t.write(num, font=("Arial", 18, "normal"))
+
+    def generate_board(self, clues):
+        self.solve_board(0, 0)
+        blanks = SIZE * SIZE - clues
+        while blanks > 0:
+            i = random.randint(0, SIZE - 1)
+            j = random.randint(0, SIZE - 1)
+            if self.board[i][j] != 0:
+                self.board[i][j] = 0
+                blanks -= 1
+
+    def is_valid(self, row, col, num):
+        for i in range(SIZE):
+            if self.board[row][i] == num or self.board[i][col] == num:
+                return False
+        row_start = (row // SUB_SIZE) * SUB_SIZE
+        col_start = (col // SUB_SIZE) * SUB_SIZE
+        for i in range(SUB_SIZE):
+            for j in range(SUB_SIZE):
+                if self.board[row_start + i][col_start + j] == num:
+                    return False
+        return True
+
+    def solve_board(self, row, col):
+        if row == SIZE:
+            return True
+        if self.board[row][col] != 0:
+            if col == SIZE - 1:
+                return self.solve_board(row + 1, 0)
+            else:
+                return self.solve_board(row, col + 1)
+        for num in range(1, SIZE + 1):
+            if self.is_valid(row, col, num):
+                self.board[row][col] = num
+                if col == SIZE - 1:
+                    if self.solve_board(row + 1, 0):
+                        return True
+                else:
+                    if self.solve_board(row, col + 1):
+                        return True
+                self.board[row][col] = 0
+        return False
+
+    def get_cell(self, x, y):
+        if -SIZE / 2 * self.cell_size < x < SIZE / 2 * self.cell_size and -SIZE / 2 * self.cell_size < y < SIZE / 2 * self.cell_size:
+            col = int((x + SIZE / 2 * self.cell_size) // self.cell_size)
+            row = int((SIZE / 2 * self.cell_size - y) // self.cell_size)
+            return row, col
+        else:
+            return None, None
+
+    def input_number(self, num):
+        if self.selected is not None:
+            row, col = self.selected
+            if self.board[row][col] == 0:
+                if self.is_valid(row, col, num):
+                    self.board[row][col] = num
+                    self.write_number(row, col, num)
+                    if self.is_solved():
+                        print("You solved the sudoku!")
+                else:
+                    print("Invalid number")
+
+    def is_solved(self):
+        for i in range(SIZE):
+            for j in range(SIZE):
+                if self.board[i][j] == 0:
+                    return False
+        return True
+
+    def highlight_cell(self, row, col):
+        self.t.penup()
+        self.t.goto(-SIZE / 2 * self.cell_size + col * self.cell_size, SIZE / 2 * self.cell_size - row * self.cell_size)
+        self.t.pencolor("red")
+        self.t.pensize(3)
+        self.t.pendown()
+        self.t.setheading(0)
+        for _ in range(4):
+            self.t.forward(self.cell_size)
+            self.t.right(90)
+        self.t.penup()
+
+    def select_cell(self, x, y):
+        row, col = self.get_cell(x, y)
+        if row is not None and col is not None:
+            if self.selected is not None:
+                self.draw_board()
+                self.show_board()
+            self.selected = (row, col)
+            self.highlight_cell(row, col)
+
+    def show_board(self):
+        for i in range(SIZE):
+            for j in range(SIZE):
+                if self.board[i][j] != 0:
+                    self.write_number(i, j, self.board[i][j])
+
+if __name__ == "__main__":
+    SudokuGame()
