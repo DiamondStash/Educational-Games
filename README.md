@@ -1,16 +1,6 @@
 
 # *Educational Games*
 
-*Table of Contents*
-
-1. #introduction
-2. #games
-    - #tic-tac-toe
-    - #sudoku
-    - #puzzle-game
-3. #benefits-of-educational-games
-4. #contributing
-
 # *Introduction*
 
 Unlock the power of learning through play with Educational Games! This suite of three engaging games is designed to challenge your cognitive abilities, enhance logical thinking, and refine problem-solving skills.
