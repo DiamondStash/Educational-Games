@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudoku Solver Supreme</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.4.0/lib/p5.js"></script>
+    <style>
+        .cell {
+            width: 50px;
+            height: 50px;
+            border: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .cell:hover {
+            background-color: #f0f0f0;
+        }
+        .cell.selected {
+            background-color: #ffebee;
+        }
+        .cell.fixed {
+            font-weight: bold;
+            color: #000;
+        }
+        .cell.error {
+            color: #f44336;
+        }
+        .subgrid {
+            border: 2px solid #000;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
+    <div class="max-w-4xl w-full bg-white rounded-xl shadow-lg overflow-hidden">
+        <div class="bg-indigo-600 p-6 text-white">
+            <h1 class="text-3xl font-bold text-center">Sudoku Solver Supreme 🧩</h1>
+            <p class="text-center mt-2 opacity-90">A modern twist on the classic puzzle game</p>
+        </div>
+        
+        <div class="p-6">
+            <div class="flex flex-col items-center">
+                <!-- Sudoku Board -->
+                <div id="board" class="grid grid-cols-9 gap-0 mb-8 border-2 border-gray-800"></div>
+                
+                <!-- Controls -->
+                <div class="flex flex-wrap gap-3 justify-center mb-6">
+                    <button id="new-game" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition">
+                        <i data-feather="refresh-cw"></i> New Game
+                    </button>
+                    <button id="check" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition">
+                        <i data-feather="check-circle"></i> Check Solution
+                    </button>
+                    <button id="solve" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition">
+                        <i data-feather="zap"></i> Solve Puzzle
+                    </button>
+                    <button id="hint" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition">
+                        <i data-feather="lightbulb"></i> Get Hint
+                    </button>
+                </div>
+                
+                <!-- Number Selector -->
+                <div class="grid grid-cols-9 gap-2 mb-6">
+                    <button class="number-btn bg-gray-200 hover:bg-indigo-100 w-10 h-10 rounded-full flex items-center justify-center text-lg font-medium transition" data-number="1">1</button>
+                    <button class="number-btn bg-gray-200 hover:bg-indigo-100 w-10 h-10 rounded-full flex items-center justify-center text-lg font-medium transition" data-number="2">2</button>
+                    <button class="number-btn bg-gray-200 hover:bg-indigo-100 w-10 h-10 rounded-full flex items-center justify-center text-lg font-medium transition" data-number="3">3</button>
+                    <button class="number-btn bg-gray-200 hover:bg-indigo-100 w-10 h-10 rounded-full flex items-center justify-center text-lg font-medium transition" data-number="4">4</button>
+                    <button class="number-btn bg-gray-200 hover:bg-indigo-100 w-10 h-10 rounded-full flex items-center justify-center text-lg font-medium transition" data-number="5">5</button>
+                    <button class="number-btn bg-gray-200 hover:bg-indigo-100 w-10 h-10 rounded-full flex items-center justify-center text-lg font-medium transition" data-number="6">6</button>
+                    <button class="number-btn bg-gray-200 hover:bg-indigo-100 w-10 h-10 rounded-full flex items-center justify-center text-lg font-medium transition" data-number="7">7</button>
+                    <button class="number-btn bg-gray-200 hover:bg-indigo-100 w-10 h-10 rounded-full flex items-center justify-center text-lg font-medium transition" data-number="8">8</button>
+                    <button class="number-btn bg-gray-200 hover:bg-indigo-100 w-10 h-10 rounded-full flex items-center justify-center text-lg font-medium transition" data-number="9">9</button>
+                </div>
+                
+                <!-- Difficulty Selector -->
+                <div class="flex items-center gap-4 mb-4">
+                    <span class="text-gray-700 font-medium">Difficulty:</span>
+                    <select id="difficulty" class="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="easy">Easy</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="hard">Hard</option>
+                        <option value="expert">Expert</option>
+                    </select>
+                </div>
+                
+                <!-- Timer and Stats -->
+                <div class="flex gap-6 text-gray-700">
+                    <div class="flex items-center gap-2">
+                        <i data-feather="clock"></i>
+                        <span id="timer">00:00</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i data-feather="check-square"></i>
+                        <span id="score">0</span> correct
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i data-feather="x-square"></i>
+                        <span id="mistakes">0</span> mistakes
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Game Over Modal -->
+    <div id="game-over-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4 text-center">
+            <i data-feather="award" class="w-16 h-16 mx-auto text-yellow-500 mb-4"></i>
+            <h2 class="text-2xl font-bold mb-2" id="result-title">Congratulations!</h2>
+            <p class="text-gray-600 mb-4" id="result-message">You solved the puzzle!</p>
+            <p class="text-gray-700 mb-4">Time: <span id="final-time">00:00</span></p>
+            <button id="play-again" class="bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-2 rounded-lg transition">Play Again</button>
+        </div>
+    </div>
+    
+    <script>
+        feather.replace();
+        
+        // Game state
+        let selectedCell = null;
+        let board = Array(9).fill().map(() => Array(9).fill(0));
+        let solution = Array(9).fill().map(() => Array(9).fill(0));
+        let fixedCells = Array(9).fill().map(() => Array(9).fill(false));
+        let startTime = null;
+        let timerInterval = null;
+        let score = 0;
+        let mistakes = 0;
+        
+        // DOM elements
+        const boardElement = document.getElementById('board');
+        const timerElement = document.getElementById('timer');
+        const scoreElement = document.getElementById('score');
+        const mistakesElement = document.getElementById('mistakes');
+        const gameOverModal = document.getElementById('game-over-modal');
+        
+        // Initialize the game
+        function initGame() {
+            // Clear previous board
+            boardElement.innerHTML = '';
+            
+            // Generate a new puzzle
+            generatePuzzle(document.getElementById('difficulty').value);
+            
+            // Create the board UI
+            for (let i = 0; i < 9; i++) {
+                for (let j = 0; j < 9; j++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.dataset.row = i;
+                    cell.dataset.col = j;
+                    
+                    // Add subgrid borders
+                    if (i % 3 === 0) cell.classList.add('border-t-2', 'border-gray-800');
+                    if (j % 3 === 0) cell.classList.add('border-l-2', 'border-gray-800');
+                    if (i === 8) cell.classList.add('border-b-2', 'border-gray-800');
+                    if (j === 8) cell.classList.add('border-r-2', 'border-gray-800');
+                    
+                    if (board[i][j] !== 0) {
+                        cell.textContent = board[i][j];
+                        cell.classList.add('fixed');
+                    }
+                    
+                    cell.addEventListener('click', () => selectCell(i, j));
+                    boardElement.appendChild(cell);
+                }
+            }
+            
+            // Reset game stats
+            score = 0;
+            mistakes = 0;
+            updateStats();
+            
+            // Start timer
+            startTime = new Date();
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+        
+        // Generate a new puzzle
+        function generatePuzzle(difficulty) {
+            // Clear the board
+            board = Array(9).fill().map(() => Array(9).fill(0));
+            
+            // Generate a solved board
+            solveSudoku(board);
+            
+            // Save the solution
+            solution = board.map(row => [...row]);
+            
+            // Determine number of clues based on difficulty
+            let clues;
+            switch(difficulty) {
+                case 'easy': clues = 45; break;
+                case 'medium': clues = 35; break;
+                case 'hard': clues = 27; break;
+                case 'expert': clues = 20; break;
+                default: clues = 35;
+            }
+            
+            // Remove numbers to create the puzzle
+            let cellsToRemove = 81 - clues;
+            while (cellsToRemove > 0) {
+                const row = Math.floor(Math.random() * 9);
+                const col = Math.floor(Math.random() * 9);
+                if (board[row][col] !== 0) {
+                    board[row][col] = 0;
+                    cellsToRemove--;
+                }
+            }
+            
+            // Mark fixed cells (pre-filled)
+            fixedCells = board.map(row => row.map(cell => cell !== 0));
+        }
+        
+        // Select a cell
+        function selectCell(row, col) {
+            // Don't allow selection of fixed cells
+            if (fixedCells[row][col]) return;
+            
+            // Deselect previous cell
+            if (selectedCell) {
+                document.querySelector(`.cell[data-row="${selectedCell.row}"][data-col="${selectedCell.col}"]`).classList.remove('selected');
+            }
+            
+            // Select new cell
+            selectedCell = { row, col };
+            const cellElement = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+            cellElement.classList.add('selected');
+        }
+        
+        // Input a number into the selected cell
+        function inputNumber(number) {
+            if (!selectedCell) return;
+            
+            const { row, col } = selectedCell;
+            const cellElement = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+            
+            // Clear error state if any
+            cellElement.classList.remove('error');
+            
+            // Set the number
+            board[row][col] = number;
+            cellElement.textContent = number === 0 ? '' : number;
+            
+            // Check if correct
+            if (number !== 0) {
+                if (number === solution[row][col]) {
+                    score++;
+                    updateStats();
+                    
+                    // Check if puzzle is complete
+                    if (isPuzzleComplete()) {
+                        clearInterval(timerInterval);
+                        showGameOver(true);
+                    }
+                } else {
+                    mistakes++;
+                    updateStats();
+                    cellElement.classList.add('error');
+                }
+            }
+        }
+        
+        // Check if the puzzle is complete and correct
+        function isPuzzleComplete() {
+            for (let i = 0; i < 9; i++) {
+                for (let j = 0; j < 9; j++) {
+                    if (board[i][j] === 0 || board[i][j] !== solution[i][j]) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        
+        // Update the timer display
+        function updateTimer() {
+            if (!startTime) return;
+            
+            const now = new Date();
+            const elapsed = Math.floor((now - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+            const seconds = (elapsed % 60).toString().padStart(2, '0');
+            timerElement.textContent = `${minutes}:${seconds}`;
+        }
+        
+        // Update score and mistakes display
+        function updateStats() {
+            scoreElement.textContent = score;
+            mistakesElement.textContent = mistakes;
+        }
+        
+        // Show game over modal
+        function showGameOver(isWin) {
+            document.getElementById('final-time').textContent = timerElement.textContent;
+            
+            if (isWin) {
+                document.getElementById('result-title').textContent = 'Congratulations!';
+                document.getElementById('result-message').textContent = 'You solved the puzzle!';
+            } else {
+                document.getElementById('result-title').textContent = 'Puzzle Solved';
+                document.getElementById('result-message').textContent = 'Here is the solution.';
+            }
+            
+            gameOverModal.classList.remove('hidden');
+        }
+        
+        // Solve the puzzle (show solution)
+        function solvePuzzle() {
+            clearInterval(timerInterval);
+            
+            for (let i = 0; i < 9; i++) {
+                for (let j = 0; j < 9; j++) {
+                    const cellElement = document.querySelector(`.cell[data-row="${i}"][data-col="${j}"]`);
+                    board[i][j] = solution[i][j];
+                    cellElement.textContent = solution[i][j];
+                    cellElement.classList.remove('error');
+                }
+            }
+            
+            showGameOver(false);
+        }
+        
+        // Check current solution
+        function checkSolution() {
+            let hasErrors = false;
+            
+            for (let i = 0; i < 9; i++) {
+                for (let j = 0; j < 9; j++) {
+                    const cellElement = document.querySelector(`.cell[data-row="${i}"][data-col="${j}"]`);
+                    
+                    if (board[i][j] !== 0 && board[i][j] !== solution[i][j]) {
+                        cellElement.classList.add('error');
+                        hasErrors = true;
+                    } else {
+                        cellElement.classList.remove('error');
+                    }
+                }
+            }
+            
+            if (!hasErrors && isPuzzleComplete()) {
+                clearInterval(timerInterval);
+                showGameOver(true);
+            }
+        }
+        
+        // Provide a hint
+        function giveHint() {
+            if (!selectedCell || board[selectedCell.row][selectedCell.col] !== 0) return;
+            
+            const { row, col } = selectedCell;
+            const cellElement = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+            
+            board[row][col] = solution[row][col];
+            cellElement.textContent = solution[row][col];
+            cellElement.classList.remove('error');
+            
+            score++;
+            updateStats();
+            
+            // Check if puzzle is complete
+            if (isPuzzleComplete()) {
+                clearInterval(timerInterval);
+                showGameOver(true);
+            }
+        }
+        
+        // Sudoku solver functions
+        function solveSudoku(grid) {
+            const emptySpot = findEmptySpot(grid);
+            if (!emptySpot) return true; // Puzzle solved
+            
+            const [row, col] = emptySpot;
+            
+            for (let num = 1; num <= 9; num++) {
+                if (isValid(grid, row, col, num)) {
+                    grid[row][col] = num;
+                    
+                    if (solveSudoku(grid)) {
+                        return true;
+                    }
+                    
+                    grid[row][col] = 0;
+                }
+            }
+            
+            return false; // Trigger backtracking
+        }
+        
+        function findEmptySpot(grid) {
+            for (let i = 0; i < 9; i++) {
+                for (let j = 0; j < 9; j++) {
+                    if (grid[i][j] === 0) {
+                        return [i, j];
+                    }
+                }
+            }
+            return null;
+        }
+        
+        function isValid(grid, row, col, num) {
+            // Check row
+            for (let j = 0; j < 9; j++) {
+                if (grid[row][j] === num) return false;
+            }
+            
+            // Check column
+            for (let i = 0; i < 9; i++) {
+                if (grid[i][col] === num) return false;
+            }
+            
+            // Check 3x3 box
+            const boxRow = Math.floor(row / 3) * 3;
+            const boxCol = Math.floor(col / 3) * 3;
+            
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    if (grid[boxRow + i][boxCol + j] === num) return false;
+                }
+            }
+            
+            return true;
+        }
+        
+        // Event listeners
+        document.getElementById('new-game').addEventListener('click', initGame);
+        document.getElementById('solve').addEventListener('click', solvePuzzle);
+        document.getElementById('check').addEventListener('click', checkSolution);
+        document.getElementById('hint').addEventListener('click', giveHint);
+        document.getElementById('play-again').addEventListener('click', () => {
+            gameOverModal.classList.add('hidden');
+            initGame();
+        });
+        
+        document.querySelectorAll('.number-btn').forEach(btn => {
+            btn.addEventListener('click', () => inputNumber(parseInt(btn.dataset.number)));
+        });
+        
+        // Keyboard support
+        document.addEventListener('keydown', (e) => {
+            if (e.key >= '1' && e.key <= '9') {
+                inputNumber(parseInt(e.key));
+            } else if (e.key === '0' || e.key === 'Backspace' || e.key === 'Delete') {
+                inputNumber(0);
+            } else if (e.key === 'ArrowUp' && selectedCell) {
+                const newRow = Math.max(0, selectedCell.row - 1);
+                selectCell(newRow, selectedCell.col);
+            } else if (e.key === 'ArrowDown' && selectedCell) {
+                const newRow = Math.min(8, selectedCell.row + 1);
+                selectCell(newRow, selectedCell.col);
+            } else if (e.key === 'ArrowLeft' && selectedCell) {
+                const newCol = Math.max(0, selectedCell.col - 1);
+                selectCell(selectedCell.row, newCol);
+            } else if (e.key === 'ArrowRight' && selectedCell) {
+                const newCol = Math.min(8, selectedCell.col + 1);
+                selectCell(selectedCell.row, newCol);
+            }
+        });
+        
+        // Start the game
+        initGame();
+    </script>
+</body>
+</html>
